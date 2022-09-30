@@ -33,7 +33,7 @@ class AccountController extends Controller
       
           $newAccount = new Account([
             'name' => $request->get('name'),
-            'cutoff-date' => $request->get('cutoff-date')
+            'cutoff_date' => $request->get('cutoff_date')
           ]);
       
           $newAccount->save();

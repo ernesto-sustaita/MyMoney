@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Expense;
 use Illuminate\Http\Request;
+use Nette\Schema\Expect;
 
 class ExpenseController extends Controller
 {
@@ -14,17 +16,8 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $expenses =  Expense::all();
+        return response()->json($expenses);
     }
 
     /**
@@ -35,7 +28,21 @@ class ExpenseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'quantity' => 'required',
+            'account_id' => 'required',
+            'budget_id' => 'required'
+        ]);
+      
+        $newExpense = new Expense([
+            'quantity' => $request->get('quantity'),
+            'account_id' => $request->get('account_id'),
+            'budget_id' => $request->get('budget_id')
+        ]);
+      
+        $newExpense->save();
+    
+        return response()->json($newExpense);
     }
 
     /**
@@ -46,18 +53,8 @@ class ExpenseController extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $expense = Expense::findOrFail($id);
+        return response()->json($expense);
     }
 
     /**
@@ -69,7 +66,21 @@ class ExpenseController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $expense = Expense::findOrFail($id);
+
+        $request->validate([
+            'quantity' => 'required',
+            'account_id' => 'required',
+            'budget_id' => 'required'
+        ]);
+
+        $expense->quantity = $request->get('quantity');
+        $expense->account_id = $request->get('account_id');
+        $expense->budget_id = $request->get('budget_id');
+
+        $expense->save();
+
+        return response()->json($expense);
     }
 
     /**
@@ -80,6 +91,9 @@ class ExpenseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $expense = Expense::findOrFail($id);
+        $expense->delete();
+
+        return response()->json($expense::all());
     }
 }
