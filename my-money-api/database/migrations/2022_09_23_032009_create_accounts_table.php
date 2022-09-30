@@ -17,7 +17,7 @@ class CreateAccountsTable extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name');
-            $table->date('cutoff-date')->nullable();
+            $table->date('cutoff_date')->nullable();
         });
     }
 

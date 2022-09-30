@@ -15,18 +15,8 @@ class AccountController extends Controller
      */
     public function index()
     {
-        $budgets = Account::all();
-        return response()->json($budgets);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $accounts = Account::all();
+        return response()->json($accounts);
     }
 
     /**
@@ -37,7 +27,18 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|max:255'
+          ]);
+      
+          $newAccount = new Account([
+            'name' => $request->get('name'),
+            'cutoff-date' => $request->get('cutoff-date')
+          ]);
+      
+          $newAccount->save();
+      
+          return response()->json($newAccount);
     }
 
     /**
@@ -48,18 +49,8 @@ class AccountController extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $account = Account::findOrFail($id);
+        return response()->json($account);
     }
 
     /**
@@ -71,7 +62,18 @@ class AccountController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $account = Account::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|max:255'
+        ]);
+
+        $account->name = $request->get('name');
+        $account->cutoff_date = $request->get('cutoff_date');
+
+        $account->save();
+
+        return response()->json($account);
     }
 
     /**
@@ -82,6 +84,9 @@ class AccountController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $account = Account::findOrFail($id);
+        $account->delete();
+
+        return response()->json($account::all());
     }
 }

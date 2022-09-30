@@ -12,6 +12,6 @@ class Account extends Model
     protected $fillable = [
         'name',
         'type',
-        'cutoff-date'
+        'cutoff_date'
       ];
 }
