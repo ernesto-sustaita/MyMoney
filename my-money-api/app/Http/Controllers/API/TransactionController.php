@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
@@ -14,17 +15,8 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $transactions =  Transaction::all();
+        return response()->json($transactions);
     }
 
     /**
@@ -35,7 +27,21 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'quantity' => 'required',
+            'account_id' => 'required',
+            'type' => 'required'
+        ]);
+      
+        $newTransaction = new Transaction([
+            'quantity' => $request->get('quantity'),
+            'account_id' => $request->get('account_id'),
+            'type' => $request->get('type')
+        ]);
+      
+        $newTransaction->save();
+    
+        return response()->json($newTransaction);
     }
 
     /**
@@ -46,18 +52,8 @@ class TransactionController extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $transaction = Transaction::findOrFail($id);
+        return response()->json($transaction);
     }
 
     /**
@@ -69,7 +65,21 @@ class TransactionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $transaction = Transaction::findOrFail($id);
+
+        $request->validate([
+            'quantity' => 'required',
+            'account_id' => 'required',
+            'type' => 'required'
+        ]);
+
+        $transaction->quantity = $request->get('quantity');
+        $transaction->account_id = $request->get('account_id');
+        $transaction->type = $request->get('type');
+
+        $transaction->save();
+
+        return response()->json($transaction);
     }
 
     /**
@@ -80,6 +90,9 @@ class TransactionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $transaction = Transaction::findOrFail($id);
+        $transaction->delete();
+
+        return response()->json($transaction::all());
     }
 }
